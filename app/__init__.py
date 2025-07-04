@@ -51,3 +51,32 @@ def add_lead():
     db.session.commit()
 
     return redirect(url_for("index"))
+
+# ✅ Add this diagnostic route BELOW your other routes
+@app.route("/diagnostic")
+def diagnostic():
+    try:
+        # Test database connection
+        leads = Lead.query.all()
+        lead_list = [
+            {
+                "id": lead.id,
+                "name": lead.name,
+                "email": lead.email,
+                "phone": lead.phone
+            }
+            for lead in leads
+        ]
+
+        return jsonify({
+            "status": "success",
+            "message": "Diagnostic OK!",
+            "lead_count": len(lead_list),
+            "leads_sample": lead_list[:3]
+        })
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error_message": str(e)
+        })
